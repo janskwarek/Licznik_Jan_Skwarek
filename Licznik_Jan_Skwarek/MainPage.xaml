@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Licznik_Jan_Skwarek"
+             xmlns:models="clr-namespace:Licznik_Jan_Skwarek.Models"
+             x:Class="Licznik_Jan_Skwarek.MainPage"
+             x:DataType="local:MainPage"
+             Title="Licznik">
+    <Grid Padding="20"
+          RowDefinitions="Auto,*"
+          RowSpacing="20">
+        <VerticalStackLayout Spacing="10">
+            <Label Text="Utworzone liczniki"
+                   Style="{StaticResource Headline}" />
+            <Grid ColumnDefinitions="*,Auto"
+                  ColumnSpacing="10">
+                <Entry x:Name="CounterNameEntry"
+                       Placeholder="Nazwa licznika"
+                       ReturnType="Done"/>
+                <Button Grid.Column="1"
+                        Text="Dodaj"
+                        Clicked="OnAddCounterClicked" />
+            </Grid>
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="1"
+                        ItemsSource="{Binding Counters}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Counter">
+                    <Grid Padding="0,8"
+                          ColumnDefinitions="*,Auto,Auto,Auto"
+                          ColumnSpacing="10">
+                        <Label Text="{Binding Name}"
+                               VerticalOptions="Center"
+                                />
+                        <Button Grid.Column="1"
+                                Text="−"
+                                Clicked="OnDecrementClicked"
+                                SemanticProperties.Hint="Zmniejsz wartość licznika" />
+                        <Label Grid.Column="2"
+                               Text="{Binding Value}"
+                               
+                               HorizontalTextAlignment="Center"
+                               VerticalTextAlignment="Center"
+                               FontSize="18" />
+                        <Button Grid.Column="3"
+                                Text="+"
+                                Clicked="OnIncrementClicked"
+                                SemanticProperties.Hint="Zwiększ wartość licznika" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>
