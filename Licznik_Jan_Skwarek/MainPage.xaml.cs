@@ -26,7 +26,6 @@ public partial class MainPage : ContentPage
         _isInitialized = true;
     }
 
-    // Odczyt ze zbiorczego pliku
     private void LoadAllData()
     {
         Counters.Clear();
@@ -47,7 +46,6 @@ public partial class MainPage : ContentPage
         }
     }
 
-    // Zapis całej kolekcji do jednego pliku za jednym zamachem
     private void SaveAllData()
     {
         var linesToSave = new List<string>();
