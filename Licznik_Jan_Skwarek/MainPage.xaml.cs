@@ -1,4 +1,4 @@
-﻿using Licznik_Jan_Skwarek.Models;
+using Licznik_Jan_Skwarek.Models;
 using System.Collections.ObjectModel;
 
 namespace Licznik_Jan_Skwarek;
@@ -32,7 +32,7 @@ public partial class MainPage : ContentPage
     {
         Counters.Clear();
 
-        var filePaths = Directory.GetFiles(FileSystem.AppDataDirectory, "counter-*.txt");
+        var filePaths = Directory.GetFiles(FileSystem.AppDataDirectory, "licznik-*.txt");
         foreach (var filePath in filePaths)
         {
             Counters.Add(ReadCounterFromFile(filePath));
@@ -94,7 +94,7 @@ public partial class MainPage : ContentPage
     {
         if (string.IsNullOrEmpty(counter.FileName))
         {
-            counter.FileName = $"counter-{Path.GetRandomFileName()}.txt";
+            counter.FileName = $"licznik-{Path.GetRandomFileName()}.txt";
         }
 
         var filePath = Path.Combine(FileSystem.AppDataDirectory, counter.FileName);
