@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:Licznik_Jan_Skwarek"
@@ -6,45 +6,69 @@
              x:Class="Licznik_Jan_Skwarek.MainPage"
              x:DataType="local:MainPage"
              Title="Licznik">
+             
     <Grid Padding="20"
           RowDefinitions="Auto,*"
           RowSpacing="20">
+          
+        <!-- Sekcja nagłówka i wprowadzania -->
         <VerticalStackLayout Spacing="10">
             <Label Text="Utworzone liczniki"
-                   Style="{StaticResource Headline}" />
+                   FontSize="18"
+                   FontAttributes="Bold" />
+                   
             <Grid ColumnDefinitions="*,Auto"
                   ColumnSpacing="10">
                 <Entry x:Name="CounterNameEntry"
                        Placeholder="Nazwa licznika"
+                       VerticalOptions="Center"
                        ReturnType="Done"/>
                 <Button Grid.Column="1"
                         Text="Dodaj"
+                        BackgroundColor="#512BD4"
+                        TextColor="White"
+                        CornerRadius="8"
                         Clicked="OnAddCounterClicked" />
             </Grid>
         </VerticalStackLayout>
 
+        <!-- Lista liczników -->
         <CollectionView Grid.Row="1"
                         ItemsSource="{Binding Counters}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Counter">
-                    <Grid Padding="0,8"
+                    <Grid Padding="0,10"
                           ColumnDefinitions="*,Auto,Auto,Auto"
-                          ColumnSpacing="10">
+                          ColumnSpacing="12"
+                          VerticalOptions="Center">
+                          
                         <Label Text="{Binding Name}"
                                VerticalOptions="Center"
-                                />
+                               FontSize="16" />
+                               
                         <Button Grid.Column="1"
                                 Text="−"
+                                BackgroundColor="#E1DFDD"
+                                TextColor="Black"
+                                CornerRadius="6"
+                                WidthRequest="45"
                                 Clicked="OnDecrementClicked"
                                 SemanticProperties.Hint="Zmniejsz wartość licznika" />
+                                
                         <Label Grid.Column="2"
                                Text="{Binding Value}"
-                               
                                HorizontalTextAlignment="Center"
                                VerticalTextAlignment="Center"
-                               FontSize="18" />
+                               FontSize="18"
+                               FontAttributes="Bold"
+                               MinimumWidthRequest="30" />
+                               
                         <Button Grid.Column="3"
                                 Text="+"
+                                BackgroundColor="#E1DFDD"
+                                TextColor="Black"
+                                CornerRadius="6"
+                                WidthRequest="45"
                                 Clicked="OnIncrementClicked"
                                 SemanticProperties.Hint="Zwiększ wartość licznika" />
                     </Grid>
