@@ -5,7 +5,8 @@ namespace Licznik_Jan_Skwarek;
 
 public partial class MainPage : ContentPage
 {
-    private bool _hasLoadedCounters;
+    private bool _isInitialized;
+    private readonly string _storagePath = Path.Combine(FileSystem.AppDataDirectory, "moje_dane_licznikow.txt");
 
     public ObservableCollection<Counter> Counters { get; } = [];
 
@@ -19,85 +20,82 @@ public partial class MainPage : ContentPage
     {
         base.OnAppearing();
 
-        if (_hasLoadedCounters)
-        {
-            return;
-        }
+        if (_isInitialized) return;
 
-        LoadCounters();
-        _hasLoadedCounters = true;
+        LoadAllData();
+        _isInitialized = true;
     }
 
-    private void LoadCounters()
+    // Odczyt ze zbiorczego pliku
+    private void LoadAllData()
     {
         Counters.Clear();
 
-        var filePaths = Directory.GetFiles(FileSystem.AppDataDirectory, "licznik-*.txt");
-        foreach (var filePath in filePaths)
+        if (!File.Exists(_storagePath)) return;
+
+        var lines = File.ReadAllLines(_storagePath);
+        for (int i = 0; i < lines.Length; i += 2)
         {
-            Counters.Add(ReadCounterFromFile(filePath));
+            if (i + 1 < lines.Length)
+            {
+                Counters.Add(new Counter
+                {
+                    Name = lines[i],
+                    Value = int.Parse(lines[i + 1])
+                });
+            }
         }
     }
 
-    private static Counter ReadCounterFromFile(string filePath)
+    // Zapis całej kolekcji do jednego pliku za jednym zamachem
+    private void SaveAllData()
     {
-        var fileLines = File.ReadAllLines(filePath);
-        return new Counter
+        var linesToSave = new List<string>();
+        foreach (var item in Counters)
         {
-            Name = fileLines[0],
-            Value = int.Parse(fileLines[1]),
-            FileName = Path.GetFileName(filePath)
-        };
+            linesToSave.Add(item.Name);
+            linesToSave.Add(item.Value.ToString());
+        }
+        File.WriteAllLines(_storagePath, linesToSave);
     }
 
     private void OnAddCounterClicked(object? sender, EventArgs e)
     {
-        var counterName = CounterNameEntry.Text?.Trim();
-        if (string.IsNullOrWhiteSpace(counterName))
-        {
-            return;
-        }
+        string inputName = CounterNameEntry.Text?.Trim() ?? string.Empty;
+        if (string.IsNullOrEmpty(inputName)) return;
 
-        var counter = new Counter { Name = counterName };
-        Counters.Add(counter);
+        var newCounter = new Counter { Name = inputName, Value = 0 };
+        Counters.Add(newCounter);
+        
         CounterNameEntry.Text = string.Empty;
-        SaveCounter(counter);
+        SaveAllData();
     }
 
     private void OnDecrementClicked(object? sender, EventArgs e)
     {
-        ChangeCounterValue(sender, -1);
+        ModifyTargetCounter(sender, -1);
     }
 
     private void OnIncrementClicked(object? sender, EventArgs e)
     {
-        ChangeCounterValue(sender, 1);
+        ModifyTargetCounter(sender, 1);
     }
 
-    private static Counter? GetCounter(object? sender)
+    private static Counter? ExtractCounterFromSender(object? sender)
     {
-        return (sender as Button)?.BindingContext as Counter;
-    }
-
-    private void ChangeCounterValue(object? sender, int change)
-    {
-        if (GetCounter(sender) is not { } counter)
+        if (sender is Button btn && btn.BindingContext is Counter match)
         {
-            return;
+            return match;
         }
-
-        counter.Value += change;
-        SaveCounter(counter);
+        return null;
     }
 
-    private static void SaveCounter(Counter counter)
+    private void ModifyTargetCounter(object? sender, int step)
     {
-        if (string.IsNullOrEmpty(counter.FileName))
-        {
-            counter.FileName = $"licznik-{Path.GetRandomFileName()}.txt";
-        }
+        var target = ExtractCounterFromSender(sender);
+        if (target == null) return;
 
-        var filePath = Path.Combine(FileSystem.AppDataDirectory, counter.FileName);
-        File.WriteAllLines(filePath, [counter.Name, counter.Value.ToString()]);
+        target.Value += step;
+        SaveAllData();
     }
 }
